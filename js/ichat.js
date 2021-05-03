@@ -19,10 +19,13 @@ $(function() {
 
     $("#send").click(()=>{
 
-        chats.append("<li class='chat-list-group-item'>"+msg.val()+"</li>");
+        let timestamp = new Date();
+        chats.append("<li class='chat-list-group-item-other'>"+msg.val()
+        +"<span class='timestamp-other'>"+parseDate(timestamp)+"</span>"
+        +"</li>");
 
         let chatObj = getChatObj(activeChatDetails,msg.val());
-        populateSentChat({...chatObj,timestamp:new Date()});        
+        populateSentChat({...chatObj,timestamp});        
        
         socket.emit("privatechat",chatObj);
         msg.val("");
@@ -38,6 +41,7 @@ $(function() {
     
     $("ul[id='participantList']").click(e =>{
         if(e.target.nodeName =="LI"){
+            $("#activechatStatus").text("Online");
             $("#activeChat").text(e.target.id);
             $(e.target).find("span").remove();
             activeChatDetails = allParticipants.find(x=> x.hostname == e.target.id);
@@ -55,6 +59,7 @@ $(function() {
 
     socket.on("participantin",(arg) =>{
         allParticipants.push(arg);
+        if(activeChatDetails.hostname ==arg.hostname) $("#activechatStatus").text("Online");
         participantList.append("<li id="+arg.hostname+" class='list-group-item'>"
         +"<img src='/node_modules/bootstrap-icons/icons/person-fill.svg' />"
         +arg.hostname+"</li>");
@@ -62,6 +67,7 @@ $(function() {
 
     socket.on("participantout",(arg) =>{
         allParticipants = allParticipants.filter(x => x.hostname !=arg.hostname);
+        if(activeChatDetails.hostname ==arg.hostname) $("#activechatStatus").text("Offline");
         $("#"+arg.hostname).remove();
     });
 
@@ -73,10 +79,13 @@ $(function() {
 
     socket.on("privatechat",(arg)=>{
         if(activeChatDetails.hostname ==arg.senderHostName){
-            chats.append("<li class='chat-list-group-item-other'>"+arg.msg+"</li>");
+            chats.append("<li class='chat-list-group-item'>"+arg.msg
+            +"<span class='timestamp'>"+parseDate(arg.timestamp)+"</span>"
+            +"</li>");
            
         }else{
-            participantList.find("li[id="+arg.senderHostName+"]").append('<span class="badge badge-primary badge-pill">New</span>');
+            let partipantOnlineElem = participantList.find("li[id="+arg.senderHostName+"]");
+            if(partipantOnlineElem.find("span").length < 1) partipantOnlineElem.append('<span class="badge badge-primary badge-pill">New</span>');
         }
 
         populateRecievedChat(arg);
@@ -120,10 +129,14 @@ $(function() {
 
            arg.chat.forEach(x=>{
                 if(x.senderHostName){
-                    chats.append("<li class='chat-list-group-item-other'>"+x.msg+"</li>");
+                    chats.append("<li class='chat-list-group-item'>"+x.msg
+                    +"<span class='timestamp'>"+parseDate(x.timestamp)+"</span>"
+                    +"</li>");
                 }else{
 
-                    chats.append("<li class='chat-list-group-item'>"+x.msg+"</li>");
+                    chats.append("<li class='chat-list-group-item-other'>"+x.msg
+                    +"<span class='timestamp-other'>"+parseDate(x.timestamp)+"</span>"
+                    +"</li>");
                 }
            });
        }
@@ -153,5 +166,10 @@ $(function() {
               
         }
     });
+
+    const parseDate = (d) => {
+        let date = new Date(d);
+        return `${date.getHours()}:${date.getMinutes()}`;
+    }
 
 });

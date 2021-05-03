@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const http = require('http');
 const { instrument } = require("@socket.io/admin-ui");
-
+const centralHost = require("os").hostname();
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server ,{
@@ -52,5 +52,8 @@ io.on('connection', (socket) => {
 
  
 server.listen(config.central.port, () => {
-    console.log('Central. machine server started on port '+config.central.port);
+    console.log('Central machine server started on port '+config.central.port);
+    console.log('Your central machine host name is specific to your machine and it is "'+centralHost+'" please update it in config\\config.json.' );
+    console.info('You can also configure ipv4 address instead of host name.');
 });
+

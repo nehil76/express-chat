@@ -9,6 +9,8 @@
     margin-bottom: 5px;
     min-height: 3em;
     width: 12em;
+    padding: 1em;
+
 }
 
 .chat-list-group-item-other{
@@ -20,7 +22,24 @@
     margin-left: 15em;
     margin-right: 1em;
     width: 12em;
+    padding: 1em;
+
 }
+
+.timestamp{
+    display: block;
+    margin-top: 5px;
+    font-size: 10px;
+   
+}
+
+.timestamp-other{
+    display: block;
+    margin-top: 5px;
+    font-size: 10px;
+    text-align: right;
+}
+
 
 @media screen and (min-width:760px) {
     
@@ -38,6 +57,7 @@
     max-height: 30em;
     min-height: 30em;
     border: 1px solid lightgray;
+    max-width: 60em;
 }
 
 
