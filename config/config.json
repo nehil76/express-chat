@@ -1,0 +1,7 @@
+{
+    "port":3000,
+    "central":{
+        "port":4000,
+        "URL":"http://LAPTOP-M4RC9TVM"
+    }
+}
